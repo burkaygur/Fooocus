@@ -5,7 +5,7 @@ import einops
 import torch
 import numpy as np
 
-import comfy.model_management
+from comfy.model_management import load_model_gpu, get_torch_device
 import comfy.utils
 
 from comfy.sd import load_checkpoint_guess_config, load_lora_for_models
@@ -100,7 +100,7 @@ def ksampler(model, positive, negative, latent, seed=None, steps=30, cfg=7.0, sa
 
     seed = seed if isinstance(seed, int) else random.randint(1, 2 ** 64)
 
-    device = comfy.model_management.get_torch_device()
+    device = get_torch_device()
     latent_image = latent["samples"]
 
     if disable_noise:
@@ -128,7 +128,7 @@ def ksampler(model, positive, negative, latent, seed=None, steps=30, cfg=7.0, sa
     if noise_mask is not None:
         noise_mask = prepare_mask(noise_mask, noise.shape, device)
 
-    comfy.model_management.load_model_gpu(model)
+    load_model_gpu(model)
     real_model = model.model
 
     noise = noise.to(device)
